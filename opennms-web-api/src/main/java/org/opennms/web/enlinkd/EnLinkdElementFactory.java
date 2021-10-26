@@ -38,6 +38,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 
@@ -688,18 +690,19 @@ public class EnLinkdElementFactory implements InitializingBean,
             }
             linknode.getBridgeLinkRemoteNodes().add(remlinknode);
         }
-                
-        Map<String, List<IpNetToMedia>> macsToIpNetTOMediaMap = new HashMap<String, List<IpNetToMedia>>();
-        for (String sharedmac: segment.getMacsOnSegment()) {
-            if (sharedmac.equals(mac)) {
-                continue;
-            }
-            macsToIpNetTOMediaMap.put(sharedmac, new ArrayList<IpNetToMedia>(m_ipNetToMediaDao.findByPhysAddress(sharedmac)));
-        }
-       
-        for (String sharedmac: macsToIpNetTOMediaMap.keySet()) {
+
+        final CriteriaBuilder ipNetToMediaBuilder = new CriteriaBuilder(IpNetToMedia.class);
+        ipNetToMediaBuilder.sql("{alias}.physAddress IN (" + segment.getMacsOnSegment().stream()
+                .filter(m -> m != null && !m.equals(mac))
+                .map(m -> "'" + m + "'")
+                .collect(Collectors.joining(",")) + ")");
+
+        final Map<String, List<IpNetToMedia>> macsToIpNetToMediaMap = m_ipNetToMediaDao.findMatching(ipNetToMediaBuilder.toCriteria()).stream().collect(Collectors.groupingBy(IpNetToMedia::getPhysAddress));
+        segment.getMacsOnSegment().stream().filter(m -> m != null && !m.equals(mac) && !macsToIpNetToMediaMap.containsKey(m)).forEach(m -> macsToIpNetToMediaMap.put(m, new ArrayList<>()));
+
+        for (String sharedmac: macsToIpNetToMediaMap.keySet()) {
             final BridgeLinkRemoteNode remlinknode = new BridgeLinkRemoteNode();
-            if (macsToIpNetTOMediaMap.get(sharedmac).isEmpty()) {
+            if (macsToIpNetToMediaMap.get(sharedmac).isEmpty()) {
                 OnmsSnmpInterface snmp = getFromPhysAddress(sharedmac);
                 if (snmp == null) {
                     remlinknode.setBridgeRemote(getIdString("mac", sharedmac));
@@ -715,14 +718,13 @@ public class EnLinkdElementFactory implements InitializingBean,
                 continue;
             }
 
-            List<OnmsIpInterface> remipaddrs = new ArrayList<OnmsIpInterface>();
-            for (IpNetToMedia ipnettomedia : macsToIpNetTOMediaMap.get(sharedmac)) {
-                remipaddrs.addAll(m_ipInterfaceDao.findByIpAddress(ipnettomedia.getNetAddress().getHostAddress()));
-            }
-            
+            final CriteriaBuilder ipInterfaceBuilder = new CriteriaBuilder(OnmsIpInterface.class);
+            ipInterfaceBuilder.sql("{alias}.ipaddr IN (" + macsToIpNetToMediaMap.get(sharedmac).stream().map(ipNetToMedia -> "'" + ipNetToMedia.getNetAddress().getHostAddress() + "'").collect(Collectors.joining(",")) + ")");
+            final List<OnmsIpInterface> remipaddrs = m_ipInterfaceDao.findMatching(ipInterfaceBuilder.toCriteria());
+
             if (remipaddrs.size() == 0) { 
                 remlinknode.setBridgeRemote(getIdString("mac", sharedmac));
-                remlinknode.setBridgeRemotePort(getIpListAsStringFromIpNetToMedia(macsToIpNetTOMediaMap.get(sharedmac)));
+                remlinknode.setBridgeRemotePort(getIpListAsStringFromIpNetToMedia(macsToIpNetToMediaMap.get(sharedmac)));
                 linknode.getBridgeLinkRemoteNodes().add(remlinknode);
                 continue;
             }
@@ -750,7 +752,7 @@ public class EnLinkdElementFactory implements InitializingBean,
                 remlinknode.setBridgeRemote(getHostString(labels.iterator().next(),"mac",sharedmac));
                 remlinknode.setBridgeRemoteUrl(getNodeUrl(remipaddrs.iterator().next().getNodeId()));
             }
-            remlinknode.setBridgeRemotePort(getIpListAsStringFromIpNetToMedia(macsToIpNetTOMediaMap.get(sharedmac)));
+            remlinknode.setBridgeRemotePort(getIpListAsStringFromIpNetToMedia(macsToIpNetToMediaMap.get(sharedmac)));
             linknode.getBridgeLinkRemoteNodes().add(remlinknode);
         }        
         return linknode;
