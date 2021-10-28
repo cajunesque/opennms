@@ -163,7 +163,7 @@ const advString: any = ref([]);
 
 const urlIcon = ref('pi pi-check-circle');
 
-const hostPlaceholder = ref('(0-255).(0-255).(0-255).(0-255)');
+const hostPlaceholder = ref('hostname or ip address');
 
 const putDataPosition = ref();
 
