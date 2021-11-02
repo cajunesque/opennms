@@ -38,15 +38,8 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.google.common.base.Strings;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.opennms.core.ipc.twin.api.TwinSubscriber;
 import org.opennms.core.ipc.twin.model.TwinRequestProto;
 import org.opennms.core.ipc.twin.model.TwinResponseProto;
@@ -54,34 +47,36 @@ import org.opennms.distributed.core.api.MinionIdentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 public abstract class AbstractTwinSubscriber implements TwinSubscriber {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractTwinSubscriber.class);
+
+    private final MinionIdentity minionIdentity;
+
     private final Multimap<String, SessionImpl<?>> sessionMap = Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
     private final Map<String, TwinTracker> objMap = new ConcurrentHashMap<>();
+
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private MinionIdentity minionIdentity;
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractTwinSubscriber.class);
-    private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
-            .setNameFormat("abstract-twin-subscriber-%d")
-            .build();
-    private ExecutorService executorService = Executors.newSingleThreadExecutor(threadFactory);
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
+                                                                                              .setNameFormat("abstract-twin-subscriber-%d")
+                                                                                              .build());
 
     protected AbstractTwinSubscriber(MinionIdentity minionIdentity) {
         this.minionIdentity = minionIdentity;
     }
 
-    public AbstractTwinSubscriber() {
-    }
-
-    /**
-     * @param twinRequest Send RpcRequest from @{@link AbstractTwinSubscriber}
-     */
     protected abstract void sendRpcRequest(TwinRequest twinRequest);
-
 
     @Override
     public <T> Closeable subscribe(String key, Class<T> clazz, Consumer<T> consumer) {
@@ -139,7 +134,7 @@ public abstract class AbstractTwinSubscriber implements TwinSubscriber {
                     && twinTracker.getVersion() > twinUpdate.getVersion()) {
                 return;
             }
-            // If this is coming completely from new session, reset tracker.
+            // If this is from new session, reset tracker.
             if (!twinTracker.getSessionId().equals(twinUpdate.getSessionId())) {
                 if (!twinUpdate.isPatch()) {
                     updateSessions(twinUpdate, twinUpdate.getObject());
@@ -203,7 +198,6 @@ public abstract class AbstractTwinSubscriber implements TwinSubscriber {
         }
     }
 
-
     protected TwinUpdate mapTwinResponseToProto(byte[] responseBytes) {
         TwinUpdate twinUpdate = new TwinUpdate();
         try {
@@ -253,7 +247,6 @@ public abstract class AbstractTwinSubscriber implements TwinSubscriber {
     }
 
     private class SessionImpl<T> implements Closeable {
-
         private final String key;
         private final Consumer<T> consumer;
         private final Class<T> clazz;
@@ -298,5 +291,4 @@ public abstract class AbstractTwinSubscriber implements TwinSubscriber {
                     .toString();
         }
     }
-
 }

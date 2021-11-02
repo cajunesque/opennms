@@ -52,6 +52,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class AbstractTwinPublisher implements TwinPublisher {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTwinPublisher.class);
+
     private final Map<SessionKey, TwinTracker> twinTrackerMap = new HashMap<>();
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -144,8 +145,7 @@ public abstract class AbstractTwinPublisher implements TwinPublisher {
                     twinUpdate.setPatch(true);
                 }
                 // Update Twin tracker with updated obj.
-                twinTracker.setObj(updatedObj);
-                twinTracker.incrementVersion();
+                twinTracker.update(updatedObj);
             }
             twinTrackerMap.put(sessionKey, twinTracker);
             twinUpdate.setVersion(twinTracker.getVersion());
@@ -204,7 +204,6 @@ public abstract class AbstractTwinPublisher implements TwinPublisher {
     }
 
     public static class SessionKey {
-
         public final String key;
         public final String location;
 
