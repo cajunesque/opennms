@@ -2,7 +2,7 @@
       <div>
             &ge;
             <select
-                  :style="{ width: '100px' }"
+                  :style="{ width: '71px' }"
                   v-model="currentValue"
                   @change="onSelectionChanged()"
             >

@@ -6,9 +6,9 @@
       </div>
     </pane>
     <pane id="map-pane-under">
-      <router-link :to="{ name: 'MapNodes' }">Nodes({{interestedNodesID.length}})</router-link>
+      <router-link :to="{ name: 'MapNodes' }">NODES({{interestedNodesID.length}})</router-link>
       |
-      <router-link :to="{ name: 'MapAlarms' }">Alarms({{alarms.length}})</router-link>
+      <router-link :to="{ name: 'MapAlarms' }">ALARMS({{alarms.length}})</router-link>
 
       <router-view />
     </pane>
@@ -52,12 +52,16 @@ store.dispatch("mapModule/getNodesGraphEdges");
 
 #map-pane-under a {
   font-family: Arial;
-  font-size: 15px;
-  /* font-weight: bold; */
-  color: #7e8198;
+  font-size: 14.5px;
+  color: #2d515c;
 }
 
 #map-pane-under a.router-link-exact-active {
-  color: #131736;
+  font-size: 15.5px;
+  color: #325c69;
+  background-color: #cfd1df;
+  font-weight: bold; 
+  padding: 8px;
+  border-radius: 3px;
 }
 </style>
