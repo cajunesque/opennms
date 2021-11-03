@@ -171,8 +171,8 @@
         <bundle>mvn:net.java.dev.jna/jna/${jnaVersion}</bundle>
         <bundle>mvn:net.java.dev.jna/jna-platform/${jnaVersion}</bundle>
     </feature>
-    <feature name="javax.mail" version="1.4.5" description="javax.mail">
-        <bundle>mvn:javax.mail/mail/1.4.5</bundle>
+    <feature name="javax.mail" version="1.6.7" description="javax.mail">
+        <bundle>mvn:com.sun.mail/jakarta.mail/1.6.7</bundle>
     </feature>
     <feature name="javax.servlet" version="${servletApiVersion}" description="javax.servlet">
         <bundle start-level="30">mvn:javax.servlet/javax.servlet-api/${servletApiVersion}</bundle>
@@ -1792,7 +1792,6 @@
         <feature>opennms-bridge-http-service</feature>
     </feature>
 
-
     <feature name="opennms-bridge-http-service" description="OpenNMS Bridge OSGi HTTP Service" version="${opennms.osgi.version}">
         <bundle dependency="true" start-level="30">mvn:javax.servlet/javax.servlet-api/3.1.0</bundle>
         <bundle start-level="30">mvn:org.apache.felix/org.apache.felix.http.bridge/${felixBridgeVersion}</bundle>
@@ -1803,7 +1802,7 @@
         </conditional>
     </feature>
 
-    <feature name="opennms-core-ipc-twin-jms-subscriber" description="OpenNMS :: Core :: IPC :: Twin :: JMS :: Subscriber" version="${project.version}">
+    <feature name="opennms-core-ipc-twin-jms" description="OpenNMS :: Core :: IPC :: Twin :: JMS" version="${project.version}">
         <feature>camel-blueprint</feature>
         <feature>camel-jms</feature>
         <feature>guava</feature>
@@ -1817,7 +1816,7 @@
     <feature name="opennms-core-ipc-jms" description="OpenNMS :: Core :: IPC :: JMS" version="${project.version}">
         <feature>opennms-core-ipc-sink-camel</feature>
         <feature>opennms-core-ipc-rpc-jms</feature>
-        <feature>opennms-core-ipc-twin-jms-subscriber</feature>
+        <feature>opennms-core-ipc-twin-jms</feature>
     </feature>
     <feature name="opennms-core-ipc-kafka" description="OpenNMS :: Core :: IPC :: Kafka" version="${project.version}">
         <feature>opennms-core-ipc-sink-kafka</feature>
@@ -1827,8 +1826,8 @@
 
     <feature name="opennms-core-ipc-twin-kafka-common" version="${project.version}" description="OpenNMS :: Core :: IPC :: Twin :: Kafka :: Common">
         <feature>opennms-kafka</feature>
-        <bundle>mvn:org.opennms.core.ipc.common/org.opennms.core.ipc.common.kafka/${project.version}</bundle>
         <bundle>mvn:org.opennms.core.ipc.twin/org.opennms.core.ipc.twin.api/${project.version}</bundle>
+        <bundle>mvn:org.opennms.core.ipc.common/org.opennms.core.ipc.common.kafka/${project.version}</bundle>
         <bundle>mvn:org.opennms.core.ipc.twin/org.opennms.core.ipc.twin.common/${project.version}</bundle>
         <bundle>mvn:org.opennms.core.ipc.twin.kafka/org.opennms.core.ipc.twin.kafka.common/${project.version}</bundle>
         <bundle>mvn:org.opennms.core/org.opennms.core.sysprops/${project.version}</bundle>
@@ -1837,5 +1836,9 @@
     <feature name="opennms-core-ipc-twin-kafka" version="${project.version}" description="OpenNMS :: Core :: IPC :: Twin :: Kafka :: Subscriber">
         <feature>opennms-core-ipc-twin-kafka-common</feature>
         <bundle>mvn:org.opennms.core.ipc.twin.kafka/org.opennms.core.ipc.twin.kafka.subscriber/${project.version}</bundle>
+    </feature>
+
+    <feature name="opennms-core-ipc-twin-shell" description="OpenNMS :: Core :: IPC :: Twin :: Shell" version="${project.version}">
+        <bundle>mvn:org.opennms.core.ipc.twin/org.opennms.core.ipc.twin.shell/${project.version}</bundle>
     </feature>
 </features>
