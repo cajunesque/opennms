@@ -36,6 +36,13 @@ export interface NodeApiResponse extends ApiResponse {
 export interface EventApiResponse extends ApiResponse {
   event: Event[]
 }
+export interface AlarmApiResponse extends ApiResponse {
+  node: Alarm[]
+}
+export interface GraphNodesApiResponse {
+  vertices: Vertice[]
+  edges: Edge[]
+}
 
 export interface SnmpInterfaceApiResponse extends ApiResponse {
   snmpInterface: SnmpInterface[]
@@ -53,6 +60,35 @@ export interface IfServiceApiResponse extends ApiResponse {
   'monitored-service': IfService[]
 }
 
+export interface MapNode {
+  id: string
+  coordinates: [number, number]
+  foreignSource: string
+  foreignId: string
+  label: string
+  labelSource: any
+  lastCapabilitiesScan: string
+  primaryInterface: number
+  sysObjectid: string
+  sysDescription: string
+  sysName: string
+  sysContact: any
+  sysLocation: any
+  alarm: Alarm[]
+}
+
+//added by Jane
+export interface Alarm {
+  id: string
+  severity: string
+  nodeId: number
+  nodeLabel: string
+  uei: string
+  count: number
+  lastEvent: any
+  logMessage: string
+}
+
 export interface Node {
   location: string
   type: string
@@ -65,6 +101,14 @@ export interface Node {
   foreignSource: string
   lastEgressFlow: any
   lastIngressFlow: any
+  labelSource: string
+  lastCapabilitiesScan: string
+  primaryInterface: number
+  sysObjectid: string
+  sysDescription: string
+  sysName: string
+  sysContact: string
+  sysLocation: string
 }
 
 export interface Event {
@@ -195,4 +239,40 @@ export interface NodeAvailability {
   }[]
   'service-count': number
   'service-down-count': number
+}
+
+//added by Jane
+export interface Vertice {
+  tooltipText: string
+  namespace: string
+  ipAddress: string
+  x: string
+  y: string
+  id: string
+  label: string
+  iconKey: string
+  nodeId: string
+}
+
+//added by Jane
+export interface Edge {
+  source: { namespace: string, id: number }
+  target: { namespace: string, id: number }
+}
+
+//added by jane
+export interface Coordinates {
+  latitude: number, 
+  longitude: number
+}
+
+export interface AlarmQueryParameters {
+  ack?: boolean
+  clear?: boolean
+  escalate?: boolean
+}
+
+export interface AlarmModificationQueryVariable {
+  pathVariable: string
+  queryParameters:  AlarmQueryParameters
 }
