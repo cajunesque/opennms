@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Nodes from '@/containers/Nodes.vue'
 import NodeDetails from '@/containers/NodeDetails.vue'
+import Map from '@/containers/Map.vue'
 
 const router = createRouter({
   history: createWebHashHistory('/opennms/ui'),
@@ -18,7 +19,12 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*', // catch other paths and redirect
       redirect: '/'
-    }
+    },
+    {
+      path: '/map',
+      name: 'map',
+      component: Map
+    },
   ]
 })
 
