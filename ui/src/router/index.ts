@@ -2,6 +2,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Nodes from '@/containers/Nodes.vue'
 import NodeDetails from '@/containers/NodeDetails.vue'
 import Map from '@/containers/Map.vue'
+import MapNodes from "@/components/map/MapNodesGrid.vue";
+import MapAlarms from "@/components/map/MapAlarmsGrid.vue";
 
 const router = createRouter({
   history: createWebHashHistory('/opennms/ui'),
@@ -21,9 +23,21 @@ const router = createRouter({
       redirect: '/'
     },
     {
-      path: '/map',
-      name: 'map',
-      component: Map
+      path: "/map",
+      name: "Map",
+      component: Map,
+      children: [
+        {
+          path: "",
+          name: "MapNodes",
+          component: MapNodes,
+        },
+        {
+          path: "alarms",
+          name: "MapAlarms",
+          component: MapAlarms,
+        },
+      ],
     },
   ]
 })

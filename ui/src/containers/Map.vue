@@ -1,19 +1,20 @@
 <template>
-    hello
-    <div>
-        <splitpanes class="default-theme" horizontal style="height: 1000px">
-            <pane min-size="1" max-size="60">
-                <div class="leaflet-map">
-                    <span>1</span>
-                    <LeafletMap />
-                </div>
-            </pane>
-            <pane id="map-pane-under">
-                <span>2</span>
-            </pane>
-        </splitpanes>
-    </div>
-    hello again
+  hello
+  <div>
+    <splitpanes class="default-theme" horizontal style="height: 1000px">
+      <pane min-size="1" max-size="60">
+        <div class="leaflet-map">
+          <span>1</span>
+          <LeafletMap />
+        </div>
+      </pane>
+      <pane id="map-pane-under">
+        <router-link :to="{ name: 'MapNodes' }">Nodes({{ interestedNodesID.length }})</router-link>|
+        <router-link :to="{ name: 'MapAlarms' }">Alarms({{ alarms.length }})</router-link>
+         <router-view />
+      </pane>
+    </splitpanes>
+  </div>hello again
 </template>
 
 <script setup lang="ts">
