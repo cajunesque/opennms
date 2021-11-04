@@ -1,20 +1,20 @@
 <template>
-  hello
-  <div>
-    <splitpanes class="default-theme" horizontal style="height: 1000px">
-      <pane min-size="1" max-size="60">
-        <div class="leaflet-map">
-          <span>1</span>
-          <LeafletMap />
-        </div>
-      </pane>
-      <pane id="map-pane-under">
-        <router-link :to="{ name: 'MapNodes' }">Nodes({{ interestedNodesID.length }})</router-link>|
-        <router-link :to="{ name: 'MapAlarms' }">Alarms({{ alarms.length }})</router-link>
-         <router-view />
-      </pane>
-    </splitpanes>
-  </div>hello again
+  <div class="feather-row">
+    <div class="feather-col-12">
+      <splitpanes class="default-theme" horizontal style="height: 1000px">
+        <pane min-size="1" max-size="60">
+          <div class="leaflet-map">
+            <LeafletMap />
+          </div>
+        </pane>
+        <pane id="map-pane-under">
+          <router-link :to="{ name: 'MapNodes' }">Nodes({{ interestedNodesID.length }})</router-link>|
+          <router-link :to="{ name: 'MapAlarms' }">Alarms({{ alarms.length }})</router-link>
+          <router-view />
+        </pane>
+      </splitpanes>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -56,11 +56,13 @@ store.dispatch("mapModule/getNodesGraphEdges");
 #map-pane-under a {
   font-family: Arial;
   font-size: 15px;
-  /* font-weight: bold; */
-  color: #7e8198;
+  color: var(--feather-primary);
 }
 
 #map-pane-under a.router-link-exact-active {
-  color: #131736;
+  background-color: #cfd1df;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 3px;
 }
 </style>
