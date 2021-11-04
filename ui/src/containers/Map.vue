@@ -56,7 +56,6 @@ store.dispatch("mapModule/getNodesGraphEdges");
 #map-pane-under a {
   font-family: Arial;
   font-size: 15px;
-  color: var(--feather-primary);
 }
 
 #map-pane-under a.router-link-exact-active {
